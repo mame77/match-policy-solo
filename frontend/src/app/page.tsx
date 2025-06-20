@@ -14,7 +14,7 @@ export default function LoginPage() {
     setError(""); // エラーをリセット
 
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,7 +23,7 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        router.push("/dashboard"); // 成功時の遷移先
+        router.push("/matching"); // 成功時の遷移先
       } else {
         setError("ログインに失敗しました");
       }

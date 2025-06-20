@@ -13,22 +13,25 @@ export default function SignUpPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/register", {
+      const res = await fetch("http://localhost:8000/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        router.push("/"); // ログイン画面などへリダイレクト
+        localStorage.setItem("token", data.access_token);
+        router.push("/"); // 登録後にホーム画面などへ遷移
       } else {
         setError("登録に失敗しました");
       }
     } catch (err) {
+      console.error(err);
       setError("サーバーエラーが発生しました");
     }
   };
-
   return (
     <div>
       <h2>サインアップ</h2>
