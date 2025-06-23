@@ -1,8 +1,8 @@
-# app/core/security.py
-
 import bcrypt
 from datetime import datetime, timedelta
 from jose import jwt
+import os
+from dotenv import load_dotenv
 
 # パスワードのハッシュ化
 def hash_password(plain_password: str) -> str:
@@ -11,14 +11,23 @@ def hash_password(plain_password: str) -> str:
     return hashed.decode("utf-8")
 
 # JWT トークン生成
-SECRET_KEY = "your-secret-key"  # 必ず環境変数に置き換えて！
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
+
+
+# 環境変数から設定を取得
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
+
+    if "sub" not in to_encode and "username" in to_encode:
+        to_encode["sub"] = to_encode["username"]  # ✅ username を sub として入れる
+
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
+
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # パスワードの検証（ログイン時に使う）

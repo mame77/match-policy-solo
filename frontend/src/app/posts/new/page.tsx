@@ -4,35 +4,48 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function NewPostPage() {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+
+  const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!title || !body) {
-      setError("タイトルと本文を入力してください");
-      return;
+  const token = localStorage.getItem("access_token");
+console.log("🔥 token = ", token);
+
+if (!token) {
+  setError("ログイン情報がありません");
+  return;
+}
+
+
+  try {
+    const res = await fetch("http://localhost:8000/api/posts", {
+  method: "POST",
+  headers: {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${token}`  // ← ここでnullなら無効
+},
+
+  body: JSON.stringify({ content }),
+});
+
+
+console.log("status:", res.status);
+console.log("res text:", await res.text());
+
+
+    if (res.ok) {
+      router.push("/posts");
+    } else {
+      setError("投稿に失敗しました");
     }
-
-    try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, body }),
-      });
-
-      if (res.ok) {
-        router.push("/posts"); // 投稿一覧ページへ
-      } else {
-        setError("投稿に失敗しました");
-      }
-    } catch {
-      setError("サーバーエラーが発生しました");
-    }
-  };
+  } catch {
+    setError("サーバーエラーが発生しました");
+  }
+};
 
   return (
     <div
@@ -66,36 +79,14 @@ export default function NewPostPage() {
         </p>
       )}
       <form onSubmit={handleSubmit}>
-        <div>
-          {/* 【追加】ラベルを見やすくするためにスタイルを調整 */}
-          <label style={{ fontWeight: "bold", color: "#555" }}>タイトル</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{
-              width: "100%",
-              // 【変更】タップしやすいようにpaddingを大きくする
-              padding: "0.8rem",
-              marginTop: "0.5rem",
-              // 【追加】読みやすいフォントサイズを指定
-              fontSize: "1rem",
-              // 【追加】入力欄の境界を明確にする
-              border: "1px solid #ccc",
-              // 【追加】角を少し丸くする
-              borderRadius: "4px",
-              // 【追加】paddingを含んだ幅計算にする
-              boxSizing: "border-box",
-            }}
-          />
-        </div>
+        
         {/* 【変更】要素間の余白を少し広げて見やすく */}
         <div style={{ marginTop: "1.5rem" }}>
           {/* 【追加】ラベルを見やすくするためにスタイルを調整 */}
           <label style={{ fontWeight: "bold", color: "#555" }}>本文</label>
           <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             // 【変更】入力エリアを少し広げる
             rows={8}
             style={{

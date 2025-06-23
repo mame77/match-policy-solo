@@ -5,5 +5,5 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)  # 投稿者（トークンから取得）
-    content = Column(String)  # 投稿本文（body）
+    username = Column(String, index=True)
+    content = Column(String)

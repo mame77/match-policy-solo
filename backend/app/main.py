@@ -1,25 +1,21 @@
 from fastapi import FastAPI
 from app.api.routers import auth
+from app.api.routers import posts
 from starlette.middleware.cors import CORSMiddleware
+from app.db.base import Base, engine
+from app.models import user
+from dotenv import load_dotenv
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(posts.router, prefix="/api")
 
-# main.py
+load_dotenv()
+Base.metadata.create_all(bind=engine)
 
-from app.db.base import Base, engine
-from app.models import user  # ← 必ず import しておく
-
-Base.metadata.create_all(bind=engine)  # ← 起動時に1回だけ実行
-
-
-
-
-# CORSを回避するために追加
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,   # 追記により追加
-    allow_methods=["*"],      # 追記により追加
-    allow_headers=["*"]       # 追記により追加
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
-

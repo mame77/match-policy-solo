@@ -23,8 +23,11 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        router.push("/matching"); // 成功時の遷移先
-      } else {
+  const data = await res.json();  // トークンを受け取る
+  console.log("🎫 トークン:", data.access_token);
+  localStorage.setItem("access_token", data.access_token);  // 🔑 保存！
+  router.push("/matching");
+}else {
         setError("ログインに失敗しました");
       }
     } catch (err) {
