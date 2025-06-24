@@ -33,12 +33,12 @@ async def register_user(payload: RegisterRequest, db: Session = Depends(get_db))
     token = create_access_token(data={"sub": payload.username})
 
 
+
     return {
         "message": "登録成功",
         "access_token": token,
         "token_type": "bearer"
     }
-
 
 #login
 @router.post("/auth/login", response_model=TokenResponse)
