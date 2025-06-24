@@ -23,7 +23,7 @@ export default function SignUpPage() {
 
       if (res.ok) {
         localStorage.setItem("token", data.access_token);
-        router.push("/"); // 登録後にホーム画面などへ遷移
+        router.push("/setup"); // 登録後にホーム画面などへ遷移
       } else {
         setError("登録に失敗しました");
       }
