@@ -7,3 +7,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, index=True)
     content = Column(String)
+
+
+#db-modelsがあるから一つ消さないといけない
+#また今度しよう
