@@ -1,4 +1,3 @@
-# 例: app/db/init_db.py
 from app.db.session import engine
 from app.db.models.user import User
 from app.db.base import Base

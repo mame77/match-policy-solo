@@ -1,3 +1,4 @@
+#認証関連
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.deps import get_db #DB関連の設定
