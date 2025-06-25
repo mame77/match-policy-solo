@@ -1,10 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
+from dotenv import load_dotenv
+import os
 # PostgreSQL の接続URL
 # ユーザー名・パスワード・DB名などは適宜変更してください
-DATABASE_URL = "postgresql://postgres:mysecretpassword@localhost:5432/mydatabase"
+
+load_dotenv()
+DATABASE_URL =os.getenv("DATABASE_URL")
 
 # エンジン作成（PostgreSQLなので connect_args は不要）
 engine = create_engine(DATABASE_URL)
