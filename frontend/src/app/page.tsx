@@ -25,7 +25,7 @@ export default function LoginPage() {
       if (res.ok) {
   const data = await res.json();  // トークンを受け取る
   localStorage.setItem("access_token", data.access_token);  // 🔑 保存！
-  router.push("/setup");
+  router.push("/posts/new");
 }else {
         setError("ログインに失敗しました");
       }
