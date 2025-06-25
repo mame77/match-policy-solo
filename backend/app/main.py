@@ -16,7 +16,7 @@ app.include_router(matching.router)
 
 
 load_dotenv()
-Base.metadata.create_all(bind=engine)
+
 
 
 #ミドルウェア
