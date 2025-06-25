@@ -26,9 +26,12 @@
 ### フロントエンド
 
 ```bash
-cd frontend
 
-npm install next react react-dom
+postgresを動かす
+docker compose up
+
+cd frontend
+npm install next react react-dom react-easy-crop
 npm install -D typescript @types/react @types/node
 
 
@@ -38,12 +41,21 @@ cd backend
 # Python環境構築
 sudo apt update && sudo apt install -y python3-venv
 python3 -m venv .venv
+
+macの場合
 source .venv/bin/activate
 
-# 必要パッケージのインストール
-pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary \
-    python-jose passlib python-dotenv
+windowsの場合
+.venv/Scripts/activate
 
+# 必要パッケージのインストール
+pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary python-jose passlib python-dotenv pydantic-settings bcrypt
+
+
+frontendの実行コマンド
+npm run dev
+
+backendの実行コマンド
 
 💡 今後の展望
 
