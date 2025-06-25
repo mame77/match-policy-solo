@@ -1,8 +1,8 @@
+#認証関連
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
-from app.db.session import get_db #DB関連の設定
-from app.models.user import User  #userテーブルの作成
+from app.api.deps import get_db #DB関連の設定
+from app.db.models.user import User  #userテーブルの作成
 from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse #バリデーション
 from app.core.security import hash_password,verify_password,create_access_token #token,パスワード関連
 
