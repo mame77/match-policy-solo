@@ -3,7 +3,7 @@ from app.api.routers import auth
 from app.api.routers import posts
 from starlette.middleware.cors import CORSMiddleware
 from app.db.base import Base, engine
-from app.models import user
+from app.db.models import user
 from dotenv import load_dotenv
 
 app = FastAPI()
