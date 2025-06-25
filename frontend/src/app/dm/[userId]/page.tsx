@@ -10,7 +10,7 @@ type Message = {
 };
 
 export default function DMPage() {
-    const userId = (useParams() as { userId: string }).userId;
+  const userId = (useParams() as { userId: string }).userId;
 
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, sender: "partner", content: "こんにちは！" },
@@ -32,41 +32,102 @@ export default function DMPage() {
   };
 
   return (
-    <div style={{ padding: "1rem", maxWidth: "600px", margin: "0 auto" }}>
-      <h2>ユーザー {userId} とチャット中</h2>
-      <div style={{ border: "1px solid #ccc", padding: "1rem", height: "300px", overflowY: "auto" }}>
+    <div className="chat-container">
+      <h2 className="chat-title">ユーザー {userId} とチャット中</h2>
+      <div className="chat-box">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            style={{
-              textAlign: msg.sender === "me" ? "right" : "left",
-              margin: "0.5rem 0",
-            }}
+            className={`chat-message ${msg.sender === "me" ? "me" : "partner"}`}
           >
-            <span
-              style={{
-                background: msg.sender === "me" ? "#dcf8c6" : "#f1f0f0",
-                padding: "0.5rem 1rem",
-                borderRadius: "1rem",
-                display: "inline-block",
-              }}
-            >
-              {msg.content}
-            </span>
+            <span className="chat-bubble">{msg.content}</span>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: "1rem", display: "flex" }}>
+      <div className="chat-input">
         <input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          style={{ flex: 1, padding: "0.5rem" }}
           placeholder="メッセージを入力"
         />
-        <button onClick={sendMessage} style={{ marginLeft: "0.5rem" }}>
-          送信
-        </button>
+        <button onClick={sendMessage}>送信</button>
       </div>
+
+      <style>{`
+        .chat-container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 1rem;
+          font-family: 'Segoe UI', sans-serif;
+        }
+
+        .chat-title {
+          text-align: center;
+          font-size: 22px;
+          margin-bottom: 1rem;
+        }
+
+        .chat-box {
+          border: 1px solid #ddd;
+          border-radius: 12px;
+          padding: 1rem;
+          height: 360px;
+          overflow-y: auto;
+          background: #f9f9f9;
+        }
+
+        .chat-message {
+          display: flex;
+          margin: 0.5rem 0;
+        }
+
+        .chat-message.me {
+          justify-content: flex-end;
+        }
+
+        .chat-message.partner {
+          justify-content: flex-start;
+        }
+
+        .chat-bubble {
+          padding: 0.6rem 1rem;
+          border-radius: 20px;
+          max-width: 75%;
+          display: inline-block;
+          background-color: #e0f7da; /* me */
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .chat-message.partner .chat-bubble {
+          background-color: #eaeaea;
+        }
+
+        .chat-input {
+          display: flex;
+          margin-top: 1rem;
+          gap: 0.5rem;
+        }
+
+        .chat-input input {
+          flex: 1;
+          padding: 0.6rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+        }
+
+        .chat-input button {
+          padding: 0.6rem 1rem;
+          background-color: #4caf50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+
+        .chat-input button:hover {
+          background-color: #45a049;
+        }
+      `}</style>
     </div>
   );
 }
