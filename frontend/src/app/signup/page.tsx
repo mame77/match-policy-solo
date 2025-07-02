@@ -11,7 +11,7 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    // #1 auth/signupにusernameとpasswordを送る
     try {
       const res = await fetch("http://localhost:8000/auth/signup", {
         method: "POST",
