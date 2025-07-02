@@ -5,18 +5,17 @@ from starlette.middleware.cors import CORSMiddleware
 from app.db.base import Base, engine
 from app.db.models import user
 from dotenv import load_dotenv
-from app.api.routers import matching,dm
-
+from app.api.routers import matching
+from app.api.routers import router
+from app.api.routers import dm
 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(posts.router, prefix="/api")
 app.include_router(matching.router)
-app.include_router(dm.router, prefix="/api")
+app.include_router(router, prefix="/api")
 
 load_dotenv()
-
-
 
 #ミドルウェア
 app.add_middleware(

@@ -16,9 +16,12 @@ export default function DMPage() {
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/messages/${userId}`)
+    fetch(`http://localhost:8000/api/dm/messages/${userId}`)
       .then((res) => res.json())
-      .then((data: Message[]) => setMessages(data))
+      .then((data) => {
+        console.log('data:', data); // ←ここ重要！
+        setMessages(data);
+      })
       .catch((err) => console.error('メッセージ取得失敗:', err));
   }, [userId]);
 
