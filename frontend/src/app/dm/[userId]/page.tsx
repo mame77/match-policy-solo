@@ -1,22 +1,26 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 type Message = {
   id: number;
-  sender: "me" | "partner";
+  sender: 'me' | 'partner';
   content: string;
 };
 
 export default function DMPage() {
   const userId = (useParams() as { userId: string }).userId;
 
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, sender: "partner", content: "こんにちは！" },
-    { id: 2, sender: "me", content: "やっほー！元気？" },
-  ]);
-  const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/api/messages/${userId}`)
+      .then((res) => res.json())
+      .then((data: Message[]) => setMessages(data))
+      .catch((err) => console.error('メッセージ取得失敗:', err));
+  }, [userId]);
 
   const sendMessage = () => {
     if (!newMessage.trim()) return;
@@ -24,11 +28,11 @@ export default function DMPage() {
       ...messages,
       {
         id: messages.length + 1,
-        sender: "me",
+        sender: 'me',
         content: newMessage,
       },
     ]);
-    setNewMessage("");
+    setNewMessage('');
   };
 
   return (
@@ -38,7 +42,7 @@ export default function DMPage() {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`chat-message ${msg.sender === "me" ? "me" : "partner"}`}
+            className={`chat-message ${msg.sender === 'me' ? 'me' : 'partner'}`}
           >
             <span className="chat-bubble">{msg.content}</span>
           </div>

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// ログインページに遷移する
+// login/page.tsxに遷移する
 export default function Home() {
   redirect("/login");
 }
