@@ -13,25 +13,31 @@ type DmUser = {
 export default function DmListPage() {
   const router = useRouter();
   const [dmUsers, setDmUsers] = useState<DmUser[]>([]);
-
-  useEffect(() => {
-    setDmUsers([
-      { id: 1, name: "さくら", lastMessage: "こんにちは！", avatarUrl: "/avatar1.jpg" },
-      { id: 2, name: "たけし", lastMessage: "またね！", avatarUrl: "/avatar2.jpg" },
-    ]);
-  }, []);
-
   const handleClick = (userId: number) => {
     router.push(`/dm/${userId}`);
   };
+
+  useEffect(() => {
+    fetch("http://localhost:8000/dm/users")
+      .then((res) => res.json())
+      .then((data) => setDmUsers(data))
+      .catch((err) => console.error("取得失敗:", err));
+  }, []);
 
   return (
     <div className="container">
       <h1 className="title">DM一覧</h1>
       <ul className="dm-list">
         {dmUsers.map((user) => (
-          <li key={user.id} className="dm-item" onClick={() => handleClick(user.id)}>
-            <img src={user.avatarUrl || "/default-avatar.png"} className="avatar" />
+          <li
+            key={user.id}
+            className="dm-item"
+            onClick={() => handleClick(user.id)}
+          >
+            <img
+              src={user.avatarUrl || "/default-avatar.png"}
+              className="avatar"
+            />
             <div className="dm-content">
               <p className="dm-name">{user.name}</p>
               <p className="dm-last">{user.lastMessage}</p>

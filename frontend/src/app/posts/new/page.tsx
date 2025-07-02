@@ -4,48 +4,43 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function NewPostPage() {
-
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("access_token");
-console.log("🔥 token = ", token);
+    const token = localStorage.getItem("access_token");
 
-if (!token) {
-  setError("ログイン情報がありません");
-  return;
-}
-
-
-  try {
-    const res = await fetch("http://localhost:8000/api/posts", {
-  method: "POST",
-  headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`  // ← ここでnullなら無効
-},
-
-  body: JSON.stringify({ content }),
-});
-
-
-console.log("status:", res.status);
-console.log("res text:", await res.text());
-
-
-    if (res.ok) {
-      router.push("/posts");
-    } else {
-      setError("投稿に失敗しました");
+    if (!token) {
+      setError("ログイン情報がありません");
+      return;
     }
-  } catch {
-    setError("サーバーエラーが発生しました");
-  }
-};
+
+    try {
+      const res = await fetch("http://localhost:8000/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ← ここでnullなら無効
+        },
+
+        body: JSON.stringify({ content }),
+      });
+
+      console.log("status:", res.status);
+      console.log("res text:", await res.text());
+
+      if (res.ok) {
+        router.push("/posts");
+      } else {
+        setError("投稿に失敗しました");
+      }
+    } catch {
+      setError("サーバーエラーが発生しました");
+    }
+  };
 
   return (
     <div
@@ -79,7 +74,6 @@ console.log("res text:", await res.text());
         </p>
       )}
       <form onSubmit={handleSubmit}>
-        
         {/* 【変更】要素間の余白を少し広げて見やすく */}
         <div style={{ marginTop: "1.5rem" }}>
           {/* 【追加】ラベルを見やすくするためにスタイルを調整 */}
@@ -129,3 +123,4 @@ console.log("res text:", await res.text());
     </div>
   );
 }
+
