@@ -5,8 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.db.base import Base, engine
 from app.db.models import user
 from dotenv import load_dotenv
-from app.api.routers import router
-from app.api.routers import matching,db
+from app.api.routers import matching  # <- matching.py をインポート
 
 
 
@@ -14,7 +13,7 @@ app = FastAPI()
 app.include_router(auth.router)
 app.include_router(posts.router, prefix="/api")
 app.include_router(matching.router)
-app.include_router(db.router, prefix="/api")
+
 
 load_dotenv()
 
