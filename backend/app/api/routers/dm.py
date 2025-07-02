@@ -7,7 +7,7 @@ from typing import List
 router = APIRouter()
 
 # ダミーDM一覧を返す（リストページ用）
-@router.get("/dm/users", response_model=List[DmUser])
+@router.get("/users", response_model=List[DmUser])
 def get_dm_users():
     return [
         DmUser(id=1, name="さくら", lastMessage="こんにちは！", avatarUrl="/avatar1.jpg"),

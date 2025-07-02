@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 type DmUser = {
   id: number;
@@ -18,10 +18,10 @@ export default function DmListPage() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8000/dm/users")
+    fetch('http://localhost:8000/api/dm/users')
       .then((res) => res.json())
       .then((data) => setDmUsers(data))
-      .catch((err) => console.error("取得失敗:", err));
+      .catch((err) => console.error('取得失敗:', err));
   }, []);
 
   return (
@@ -35,7 +35,7 @@ export default function DmListPage() {
             onClick={() => handleClick(user.id)}
           >
             <img
-              src={user.avatarUrl || "/default-avatar.png"}
+              src={user.avatarUrl || '/default-avatar.png'}
               className="avatar"
             />
             <div className="dm-content">
