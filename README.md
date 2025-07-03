@@ -1,23 +1,22 @@
 # 🗳 若者に少しでも政治に興味を持ってもらいたい Webアプリ
 
-このアプリは、投票に関する話題や対話のきっかけを提供することで、  
-若者が政治に一歩踏み出すきっかけを作ることを目指しています。
+#このアプリは、投票に関する話題や対話のきっかけを提供することで、  
+#若者が政治に一歩踏み出すきっかけを作ることを目指しています。
 
 ---
 
 ## 🛠 技術スタック
 
-| 項目             | 使用技術                              |
-|------------------|----------------------------------------|
-| フレームワーク・言語 | Next.js, TypeScript                     |
-| スタイリング       | Tailwind CSS                           |
-| API通信          | fetch                                   |
-| 認証方式         | JWT認証                                 |
-| コンポーネント設計 | Atomic Design                          |
-| データベース      | PostgreSQL                              |
-| UIカタログ        | Storybook                              |
-| デプロイ先        | Vercel                                  |
-| 開発品質ツール    | ESLint, Prettier                        |
+| 項目                 | 使用技術            |
+| -------------------- | ------------------- |
+| フレームワーク・言語 | Next.js, TypeScript |
+| API通信              | fetch               |
+| 認証方式             | JWT認証             |
+| コンポーネント設計   | Atomic Design       |
+| データベース         | PostgreSQL          |
+| UIカタログ           | Storybook           |
+| デプロイ先           | Vercel              |
+| 開発品質ツール       | ESLint, Prettier    |
 
 ---
 
@@ -42,22 +41,25 @@ cd backend
 sudo apt update && sudo apt install -y python3-venv
 python3 -m venv .venv
 
-macの場合
+#macの場合
 source .venv/bin/activate
 
-windowsの場合
+#windowsの場合
 .venv/Scripts/activate
 
 # 必要パッケージのインストール
 pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary python-jose passlib python-dotenv pydantic-settings bcrypt
 
 
-frontendの実行コマンド
+#frontendの実行コマンド
 npm run dev
+#backendの実行コマンド
+uvicorn app.main:app --reload
 
-backendの実行コマンド
+```
 
-💡 今後の展望
+```💡 今後の展望
+
 
     投票体験の疑似診断コンテンツ
 
@@ -78,3 +80,5 @@ backendの実行コマンド
     ESLint / Prettier によるコード整形・静的解析
 
     Storybook による UI カタログ作成
+```
+

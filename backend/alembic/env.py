@@ -1,8 +1,7 @@
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
-
-from app.db.models import Base,user,post  # 自作モデルをimport
+from app.db.models import Base,user,post,dm
 
 config = context.config
 
