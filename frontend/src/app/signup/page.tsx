@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { signup } from '@/lib/api/auth';
 
 export default function SignUpPage() {
   const [username, setUsername] = useState('');
@@ -12,27 +12,17 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // #1 auth/signupにusernameとpasswordを送る
+
     try {
-      const res = await fetch(`${API_URL}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('token', data.access_token);
-        router.push('/setup'); // 登録後にホーム画面などへ遷移
-      } else {
-        setError('登録に失敗しました');
-      }
-    } catch (err) {
+      const token = await signup(username, password);
+      localStorage.setItem('token', token);
+      router.push('/setup');
+    } catch (err: any) {
       console.error(err);
-      setError('サーバーエラーが発生しました');
+      setError(err.message || 'サーバーエラーが発生しました');
     }
   };
+
   return (
     <div>
       <h2>サインアップ</h2>

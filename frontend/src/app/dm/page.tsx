@@ -2,26 +2,19 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-type DmUser = {
-  id: number;
-  name: string;
-  lastMessage: string;
-  avatarUrl?: string;
-};
+import { fetchDmUsers, DmUser } from '@/lib/api/dm';
 
 export default function DmListPage() {
   const router = useRouter();
   const [dmUsers, setDmUsers] = useState<DmUser[]>([]);
+
   const handleClick = (userId: number) => {
     router.push(`/dm/${userId}`);
   };
 
   useEffect(() => {
-    fetch(`${API_URL}/api/dm/users`)
-      .then((res) => res.json())
-      .then((data) => setDmUsers(data))
+    fetchDmUsers()
+      .then(setDmUsers)
       .catch((err) => console.error('取得失敗:', err));
   }, []);
 

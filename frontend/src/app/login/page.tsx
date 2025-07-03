@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { login } from '@/lib/api/auth';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -12,27 +12,15 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); // エラーをリセット
+    setError('');
 
     try {
-      const res = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (res.ok) {
-        const data = await res.json(); // トークンを受け取る
-        localStorage.setItem('access_token', data.access_token); // 🔑 保存！
-        router.push('/posts/new');
-      } else {
-        setError('ログインに失敗しました');
-      }
-    } catch (err) {
+      const token = await login(username, password); // 関数に委譲
+      localStorage.setItem('access_token', token);
+      router.push('/posts/new');
+    } catch (err: any) {
       console.error('ログイン中にエラー発生:', err);
-      setError('サーバーエラーが発生しました');
+      setError(err.message || 'サーバーエラーが発生しました');
     }
   };
 
@@ -179,4 +167,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

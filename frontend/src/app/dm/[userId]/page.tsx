@@ -2,40 +2,29 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-type Message = {
-  id: number;
-  sender: 'me' | 'partner';
-  content: string;
-};
+import { fetchMessages, sendMessageToUser, Message } from '@/lib/api/dm';
 
 export default function DMPage() {
   const userId = (useParams() as { userId: string }).userId;
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    fetch(`${API_URL}/api/dm/messages/${userId}`)
-      .then((res) => res.json())
+    fetchMessages(userId)
       .then((data) => {
-        console.log('data:', data); // ←ここ重要！
+        console.log('data:', data);
         setMessages(data);
       })
       .catch((err) => console.error('メッセージ取得失敗:', err));
   }, [userId]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!newMessage.trim()) return;
     setMessages([
       ...messages,
-      {
-        id: messages.length + 1,
-        sender: 'me',
-        content: newMessage,
-      },
+      { id: messages.length + 1, sender: 'me', content: newMessage },
     ]);
+    await sendMessageToUser(userId, newMessage);
     setNewMessage('');
   };
 

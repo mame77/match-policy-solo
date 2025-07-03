@@ -2,21 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-type Post = {
-  id: number;
-  username: string;
-  content: string;
-};
+import { fetchMatchingPosts, Post } from '@/lib/api/matching';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/matching`)
-      .then((res) => res.json())
+    fetchMatchingPosts()
       .then((data) => {
         setPosts(data);
         setLoading(false);
@@ -26,7 +19,6 @@ export default function PostsPage() {
         setLoading(false);
       });
   }, []);
-
   if (loading) return <p style={styles.loading}>読み込み中...</p>;
 
   return (
