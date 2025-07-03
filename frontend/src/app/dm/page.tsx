@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type DmUser = {
   id: number;
@@ -18,7 +19,7 @@ export default function DmListPage() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/dm/users')
+    fetch(`${API_URL}/api/dm/users`)
       .then((res) => res.json())
       .then((data) => setDmUsers(data))
       .catch((err) => console.error('取得失敗:', err));

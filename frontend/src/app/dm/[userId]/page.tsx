@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type Message = {
   id: number;
@@ -16,7 +17,7 @@ export default function DMPage() {
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/dm/messages/${userId}`)
+    fetch(`${API_URL}/api/dm/messages/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('data:', data); // ←ここ重要！

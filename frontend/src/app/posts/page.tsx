@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type Post = {
   id: number;
@@ -14,14 +15,14 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/matching")
+    fetch(`${API_URL}/api/matching`)
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("投稿の取得に失敗しました", err);
+        console.error('投稿の取得に失敗しました', err);
         setLoading(false);
       });
   }, []);
@@ -45,39 +46,39 @@ export default function PostsPage() {
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: "600px",
-    margin: "40px auto",
+    maxWidth: '600px',
+    margin: '40px auto',
     fontFamily: "'Helvetica Neue', sans-serif",
-    padding: "0 16px",
+    padding: '0 16px',
   },
   title: {
-    textAlign: "center",
-    fontSize: "28px",
-    marginBottom: "24px",
+    textAlign: 'center',
+    fontSize: '28px',
+    marginBottom: '24px',
     fontWeight: 600,
   },
   card: {
-    background: "#fff",
-    borderRadius: "16px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    padding: "16px",
-    marginBottom: "16px",
-    transition: "transform 0.2s ease",
-    cursor: "pointer",
+    background: '#fff',
+    borderRadius: '16px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    padding: '16px',
+    marginBottom: '16px',
+    transition: 'transform 0.2s ease',
+    cursor: 'pointer',
   },
   username: {
-    fontSize: "20px",
+    fontSize: '20px',
     fontWeight: 500,
-    marginBottom: "8px",
+    marginBottom: '8px',
   },
   content: {
-    fontSize: "16px",
-    color: "#444",
+    fontSize: '16px',
+    color: '#444',
   },
   loading: {
-    textAlign: "center",
-    marginTop: "100px",
-    fontSize: "18px",
-    color: "#666",
+    textAlign: 'center',
+    marginTop: '100px',
+    fontSize: '18px',
+    color: '#666',
   },
 };
