@@ -22,13 +22,13 @@
 
 ## ⚙️ セットアップ手順
 
-### フロントエンド
-
 ```bash
 
-##postgresを動かす
+###postgresを動かす
 docker compose up
 
+
+###フロントエンド
 cd frontend
 npm install next react react-dom react-easy-crop
 npm install -D typescript @types/react @types/node
@@ -51,9 +51,9 @@ source .venv/bin/activate
 pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary python-jose passlib python-dotenv pydantic-settings bcrypt
 
 
-#frontendの実行コマンド
+##frontendの実行コマンド
 npm run dev
-#backendの実行コマンド
+##backendの実行コマンド
 uvicorn app.main:app --reload
 
 ```
