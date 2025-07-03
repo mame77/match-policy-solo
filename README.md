@@ -26,7 +26,7 @@
 
 ```bash
 
-postgresを動かす
+##postgresを動かす
 docker compose up
 
 cd frontend
