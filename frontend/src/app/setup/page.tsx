@@ -4,8 +4,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '@/utils/cropImage';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
+import { uploadProfile } from '@/lib/api/profile';
 export default function ProfileSetupPage() {
   const router = useRouter();
 
@@ -54,27 +53,22 @@ export default function ProfileSetupPage() {
       alert('画像のトリミングに失敗しました');
     }
   };
-
-  // フォーム送信時の処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!croppedPreviewUrl || !bio) return;
 
-    const blob = await fetch(croppedPreviewUrl).then((res) => res.blob());
-    const formData = new FormData();
-    formData.append('avatar', blob, 'avatar.jpg');
-    formData.append('bio', bio);
-    formData.append('user_id', '1');
+    try {
+      const blob = await fetch(croppedPreviewUrl).then((res) => res.blob());
+      await uploadProfile({
+        blob,
+        bio,
+        userId: '1',
+      });
 
-    const res = await fetch(`${API_URL}/profiles/setup`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (res.ok) {
       router.push('/home');
-    } else {
-      alert('登録に失敗しました');
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : '登録に失敗しました');
     }
   };
 
@@ -168,7 +162,7 @@ export default function ProfileSetupPage() {
         )}
 
         {croppedPreviewUrl && (
-          <img //ここの注意は実行に影響がないため放置でOK
+          <img
             src={croppedPreviewUrl}
             alt="プロフィール画像"
             style={{

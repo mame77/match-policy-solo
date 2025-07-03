@@ -6,8 +6,7 @@ from app.db.base import Base, engine
 from app.db.models import user
 from dotenv import load_dotenv
 from app.api.routers import matching
-from app.api.routers import router
-from app.api.routers import dm
+from app.api.routers import router,dm
 
 app = FastAPI()
 app.include_router(auth.router)
