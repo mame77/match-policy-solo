@@ -65,7 +65,7 @@ export default function ProfileSetupPage() {
         userId: '1',
       });
 
-      router.push('/home');
+      router.push('/posts/new');
     } catch (err) {
       console.error(err);
       alert(err instanceof Error ? err.message : '登録に失敗しました');
