@@ -137,32 +137,6 @@ export default function LoginPage() {
             サインアップ
           </Link>
         </p>
-        <p style={{ color: '#555', marginBottom: '1.5rem' }}>
-          マッチングはこちら{' '}
-          <Link
-            href="/matching"
-            style={{ color: '#007AFF', fontWeight: 'bold' }}
-          >
-            ここをタップ
-          </Link>
-        </p>
-        <p style={{ color: '#555', marginBottom: '1.5rem' }}>
-          診断はこちら{' '}
-          <Link
-            href="/diagnosis"
-            style={{ color: '#007AFF', fontWeight: 'bold' }}
-          >
-            ここをタップ
-          </Link>
-        </p>
-        <p style={{ color: '#555' }}>
-          <Link
-            href="/posts/new"
-            style={{ color: '#007AFF', fontWeight: 'bold' }}
-          >
-            新規投稿はこちら
-          </Link>
-        </p>
       </div>
     </div>
   );
