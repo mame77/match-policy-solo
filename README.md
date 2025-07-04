@@ -48,7 +48,7 @@ source .venv/bin/activate
 .venv/Scripts/activate
 
 # 必要パッケージのインストール
-pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary python-jose passlib python-dotenv pydantic-settings bcrypt
+pip install fastapi "uvicorn[standard]" SQLAlchemy alembic psycopg2-binary python-jose passlib python-dotenv pydantic-settings bcrypt boto3 python-multipart
 
 
 ##frontendの実行コマンド
