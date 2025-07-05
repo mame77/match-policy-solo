@@ -15,7 +15,7 @@ export const uploadProfile = async ({
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${API_URL}/profiles/setup`, {
+  const res = await fetch(`${API_URL}/api/profiles`, {
     method: 'POST',
     body: formData,
   });
