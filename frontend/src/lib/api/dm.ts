@@ -7,7 +7,7 @@ export type DmUser = {
 };
 
 export type Message = {
-  id: number;
+  id: string;
   sender: 'me' | 'partner';
   content: string;
 };

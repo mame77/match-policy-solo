@@ -3,31 +3,40 @@
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { fetchMessages, sendMessageToUser, Message } from '@/lib/api/dm';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function DMPage() {
   const userId = (useParams() as { userId: string }).userId;
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-
+  // ✅ メッセージ履歴を取得
   useEffect(() => {
     fetchMessages(userId)
-      .then((data) => {
-        console.log('data:', data);
-        setMessages(data);
-      })
+      .then((data) => setMessages(data))
       .catch((err) => console.error('メッセージ取得失敗:', err));
   }, [userId]);
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
-    setMessages([
-      ...messages,
-      { id: messages.length + 1, sender: 'me', content: newMessage },
-    ]);
-    await sendMessageToUser(userId, newMessage);
+
+    const tempId = uuidv4();
+    const messageToAdd = {
+      id: tempId,
+      sender: 'me',
+      content: newMessage,
+    };
+
+    setMessages((prev) => [...prev, messageToAdd]);
+
+    try {
+      await sendMessageToUser(userId, newMessage);
+    } catch (err) {
+      console.error('送信失敗:', err);
+      // エラー処理を追加するならここに
+    }
+
     setNewMessage('');
   };
-
   return (
     <div className="chat-container">
       <h2 className="chat-title">ユーザー {userId} とチャット中</h2>
