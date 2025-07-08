@@ -29,23 +29,21 @@ async def register_user(payload: RegisterRequest):
     conn.commit()
     cur.close()
     conn.close()
-
-    token = create_access_token(data={"sub": new_user[1]})
+    token = create_access_token(data={"sub": str(new_user[0])})  # new_user[0] は id
     return {"access_token": token, "token_type": "bearer"}
-
-
 # ログイン
 @router.post("/auth/login", response_model=TokenResponse)
 async def login_user(payload: LoginRequest):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT username, hashed_password FROM users WHERE username = %s", (payload.username,))
+    cur.execute("SELECT id, username, hashed_password FROM users WHERE username = %s", (payload.username,))
     user = cur.fetchone()
     cur.close()
     conn.close()
 
-    if not user or not verify_password(payload.password, user[1]):
+    if not user or not verify_password(payload.password, user[2]):
         raise HTTPException(status_code=401, detail="ユーザー名またはパスワードが間違っています")
 
-    token = create_access_token(data={"sub": user[0]})
+    user_id = user[0]  # ← ここでIDを使う
+    token = create_access_token(data={"sub": str(user_id)})
     return {"access_token": token, "token_type": "bearer"}

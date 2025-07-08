@@ -20,19 +20,17 @@ export default function DMPage() {
     if (!newMessage.trim()) return;
 
     const tempId = uuidv4();
-    const messageToAdd = {
+    const messageToAdd: Message = {
       id: tempId,
       sender: 'me',
       content: newMessage,
     };
-
     setMessages((prev) => [...prev, messageToAdd]);
 
     try {
       await sendMessageToUser(userId, newMessage);
     } catch (err) {
       console.error('送信失敗:', err);
-      // エラー処理を追加するならここに
     }
 
     setNewMessage('');
