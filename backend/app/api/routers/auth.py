@@ -1,38 +1,49 @@
-#認証関連
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.api.deps import get_db #DB関連の設定
-from app.db.models.user import User  #userテーブルの作成
-from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse #バリデーション
-from app.core.security import hash_password,verify_password,create_access_token #token,パスワード関連
-from app.services.auth_service import register_user_service
- 
+
+from fastapi import APIRouter, HTTPException
+from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
+from app.core.security import hash_password, verify_password, create_access_token
+from app.db.db import get_connection
+
 router = APIRouter()
 
+# サインアップ
 @router.post("/auth/signup", response_model=TokenResponse)
-async def register_user(payload: RegisterRequest, db: Session = Depends(get_db)):
-    token = register_user_service(payload, db)
-    return {
-        "message": "登録成功",
-        "access_token": token,
-        "token_type": "bearer"
-    }
-#login
+async def register_user(payload: RegisterRequest):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # ユーザー名の重複チェック
+    cur.execute("SELECT id FROM users WHERE username = %s", (payload.username,))
+    if cur.fetchone():
+        cur.close()
+        conn.close()
+        raise HTTPException(status_code=400, detail="ユーザー名は既に使用されています")
+
+    # ユーザー作成
+    hashed_pw = hash_password(payload.password)
+    cur.execute(
+        "INSERT INTO users (username, hashed_password) VALUES (%s, %s) RETURNING id, username",
+        (payload.username, hashed_pw)
+    )
+    new_user = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    token = create_access_token(data={"sub": str(new_user[0])})  # new_user[0] は id
+    return {"access_token": token, "token_type": "bearer"}
+# ログイン
 @router.post("/auth/login", response_model=TokenResponse)
+async def login_user(payload: LoginRequest):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, username, hashed_password FROM users WHERE username = %s", (payload.username,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
 
-#バリテーション
-async def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
-
-    #ユーザーネームとパスワードを照合
-    user = db.query(User).filter(User.username == payload.username).first()
-    if not user or not verify_password(payload.password, user.hashed_password):
+    if not user or not verify_password(payload.password, user[2]):
         raise HTTPException(status_code=401, detail="ユーザー名またはパスワードが間違っています")
 
-    #tokenを発行
-    token = create_access_token(data={"sub": user.username})
-
-
-    return {
-        "access_token": token,
-        "token_type": "bearer"
-    }
+    user_id = user[0]  # ← ここでIDを使う
+    token = create_access_token(data={"sub": str(user_id)})
+    return {"access_token": token, "token_type": "bearer"}

@@ -1,19 +1,27 @@
-#matching(投稿一覧)
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.api.deps import get_db
-from app.db.models import Post
+
+# app/api/routers/matching.py
+from fastapi import APIRouter
+from app.db.db import get_connection
 
 router = APIRouter()
 
 @router.get("/api/matching")
-def get_matching_posts(db: Session = Depends(get_db)):
-    posts = db.query(Post).order_by(Post.created_at.desc()).all()
+def get_matching_posts():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, username, content, created_at FROM posts ORDER BY created_at DESC")
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
     return [
         {
-            "id": post.id,
-            "username": post.username,
-            "content": post.content,
-            "created_at": post.created_at
-        } for post in posts
+            "id": row[0],
+            "username": row[1],
+            "content": row[2],
+            "created_at": row[3]
+        }
+        for row in rows
     ]
