@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.routers import auth
 from app.api.routers import posts
+from app.api.routers import ws
 from app.api.routers import profiles
 from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from app.api.routers import router,dm
 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(ws.ws_router)
 app.include_router(posts.router, prefix="/api")
 app.include_router(matching.router)
 app.include_router(profiles.router, prefix="/api")

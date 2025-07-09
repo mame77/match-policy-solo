@@ -1,5 +1,6 @@
 from app.db.db import get_connection
 from app.schemas.dm import DmUser, MessageOut
+from app.services.ws import manager  # ✅ 追加
 
 def fetch_dm_users(current_user_id: int):
     conn = get_connection()
@@ -61,5 +62,12 @@ def store_message(current_user_id: int, user_id: int, body: dict):
     )
     conn.commit()
     conn.close()
+
+    try:
+        asyncio.create_task(manager.send_personal_message(content, user_id))
+    except Exception as e:
+        print("WebSocket送信エラー:", e)
+
+
     return {"status": "ok"}
 
