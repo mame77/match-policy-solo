@@ -1,23 +1,17 @@
-from fastapi import FastAPI
-from app.api.routers import auth
-from app.api.routers import posts
-from app.api.routers import ws
-from app.api.routers import profiles
-from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from app.api.routers import matching
-from app.api.routers import router,dm
+load_dotenv()
+
+from fastapi import FastAPI
+from app.api.routers import auth,posts,ws,profiles,matching,dm
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(ws.ws_router)
-app.include_router(posts.router, prefix="/api")
+app.include_router(dm.router)
+app.include_router(posts.router)
 app.include_router(matching.router)
-app.include_router(profiles.router, prefix="/api")
-app.include_router(router, prefix="/api")
-import os
-load_dotenv()
-os.getenv("DATABASE_URL")
+app.include_router(profiles.router)
 
 #ミドルウェア
 app.add_middleware(

@@ -1,6 +1,6 @@
 # api/routers/ws.py
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
-from app.deps.auth import get_current_user_id
+from app.api.deps import get_current_user_id
 from app.services.ws import manager
 ws_router = APIRouter()
 

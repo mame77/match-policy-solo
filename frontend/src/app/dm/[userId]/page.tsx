@@ -6,16 +6,15 @@ import { fetchMessages, sendMessageToUser, Message } from '@/lib/api/dm';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function DMPage() {
-  const userId = (useParams() as { userId: string }).userId;
+  const { userId } = useParams() as { userId: string };
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  // ✅ メッセージ履歴を取得
+
   useEffect(() => {
     fetchMessages(userId)
       .then((data) => setMessages(data))
       .catch((err) => console.error('メッセージ取得失敗:', err));
   }, [userId]);
-
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
@@ -35,6 +34,13 @@ export default function DMPage() {
 
     setNewMessage('');
   };
+
+  const handleReceiveMessage = (msg: Message) => {
+    if (msg.sender === 'partner') {
+      setMessages((prev) => [...prev, msg]);
+    }
+  };
+
   return (
     <div className="chat-container">
       <h2 className="chat-title">ユーザー {userId} とチャット中</h2>
@@ -58,80 +64,80 @@ export default function DMPage() {
       </div>
 
       <style>{`
-        .chat-container {
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 1rem;
-          font-family: 'Segoe UI', sans-serif;
-        }
+          .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+            font-family: 'Segoe UI', sans-serif;
+          }
 
-        .chat-title {
-          text-align: center;
-          font-size: 22px;
-          margin-bottom: 1rem;
-        }
+          .chat-title {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 1rem;
+          }
 
-        .chat-box {
-          border: 1px solid #ddd;
-          border-radius: 12px;
-          padding: 1rem;
-          height: 360px;
-          overflow-y: auto;
-          background: #f9f9f9;
-        }
+          .chat-box {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 1rem;
+            height: 360px;
+            overflow-y: auto;
+            background: #f9f9f9;
+          }
 
-        .chat-message {
-          display: flex;
-          margin: 0.5rem 0;
-        }
+          .chat-message {
+            display: flex;
+            margin: 0.5rem 0;
+          }
 
-        .chat-message.me {
-          justify-content: flex-end;
-        }
+          .chat-message.me {
+            justify-content: flex-end;
+          }
 
-        .chat-message.partner {
-          justify-content: flex-start;
-        }
+          .chat-message.partner {
+            justify-content: flex-start;
+          }
 
-        .chat-bubble {
-          padding: 0.6rem 1rem;
-          border-radius: 20px;
-          max-width: 75%;
-          display: inline-block;
-          background-color: #e0f7da; /* me */
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
+          .chat-bubble {
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            max-width: 75%;
+            display: inline-block;
+            background-color: #e0f7da; /* me */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+          }
 
-        .chat-message.partner .chat-bubble {
-          background-color: #eaeaea;
-        }
+          .chat-message.partner .chat-bubble {
+            background-color: #eaeaea;
+          }
 
-        .chat-input {
-          display: flex;
-          margin-top: 1rem;
-          gap: 0.5rem;
-        }
+          .chat-input {
+            display: flex;
+            margin-top: 1rem;
+            gap: 0.5rem;
+          }
 
-        .chat-input input {
-          flex: 1;
-          padding: 0.6rem;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-        }
+          .chat-input input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+          }
 
-        .chat-input button {
-          padding: 0.6rem 1rem;
-          background-color: #4caf50;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-        }
+          .chat-input button {
+            padding: 0.6rem 1rem;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+          }
 
-        .chat-input button:hover {
-          background-color: #45a049;
-        }
-      `}</style>
+          .chat-input button:hover {
+            background-color: #45a049;
+          }
+        `}</style>
     </div>
   );
 }

@@ -16,7 +16,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchDmUsers(): Promise<DmUser[]> {
   const token = localStorage.getItem('access_token');
-  const res = await fetch(`${API_URL}/api/dm/users`, {
+  const res = await fetch(`${API_URL}/dm/users`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -29,7 +29,7 @@ export async function fetchDmUsers(): Promise<DmUser[]> {
 
 export async function fetchMessages(userId: string): Promise<Message[]> {
   const token = localStorage.getItem('access_token');
-  const res = await fetch(`${API_URL}/api/dm/messages/${userId}`, {
+  const res = await fetch(`${API_URL}/dm/messages/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -42,7 +42,7 @@ export async function sendMessageToUser(
   content: string,
 ): Promise<void> {
   const token = localStorage.getItem('access_token');
-  await fetch(`${API_URL}/api/dm/messages/${userId}`, {
+  await fetch(`${API_URL}/dm/messages/${userId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

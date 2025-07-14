@@ -4,7 +4,7 @@ export async function createPost(
   content: string,
   token: string,
 ): Promise<void> {
-  const res = await fetch(`${API_URL}/api/posts`, {
+  const res = await fetch(`${API_URL}/posts`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

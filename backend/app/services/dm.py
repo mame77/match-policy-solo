@@ -57,7 +57,10 @@ def store_message(current_user_id: int, user_id: int, body: dict):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO dms (sender_id, receiver_id, content) VALUES (%s, %s, %s);",
+        """
+        INSERT INTO dms (sender_id, receiver_id, content)
+        VALUES (%s, %s, %s);
+        """,
         (current_user_id, user_id, content)
     )
     conn.commit()
