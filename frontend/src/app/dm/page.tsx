@@ -6,12 +6,16 @@ import { fetchDmUsers, DmUser } from '@/lib/api/dm';
 
 export default function DmListPage() {
   const router = useRouter();
+
+  // DM一覧状態管理
   const [dmUsers, setDmUsers] = useState<DmUser[]>([]);
 
+  //  クリックしたときDMページへ遷移
   const handleClick = (userId: number) => {
     router.push(`/dm/${userId}`);
   };
 
+  // 初回にDMユーザー一覧を取得
   useEffect(() => {
     fetchDmUsers()
       .then(setDmUsers)

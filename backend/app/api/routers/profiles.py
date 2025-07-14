@@ -6,6 +6,7 @@ from app.services.profiles import upload_profile_image_and_bio
 
 router = APIRouter()
 
+#プロフィールを作成
 @router.post("/profiles")
 async def setup_profile(
     bio: str = Form(...),

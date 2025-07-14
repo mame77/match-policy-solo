@@ -7,6 +7,7 @@ from app.services.posts import create_post_service
 
 router = APIRouter()
 
+#投稿する
 @router.post("/posts", response_model=PostResponse)
 def create_new_post_sql(
     post: PostCreate,

@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { fetchMatchingPosts, Post } from '@/lib/api/matching';
 
 export default function PostsPage() {
+  // 投稿状態管理
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 初回投稿一覧取得
   useEffect(() => {
     fetchMatchingPosts()
       .then((data) => {
@@ -19,6 +21,7 @@ export default function PostsPage() {
         setLoading(false);
       });
   }, []);
+
   if (loading) return <p style={styles.loading}>読み込み中...</p>;
 
   return (

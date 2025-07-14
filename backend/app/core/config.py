@@ -1,7 +1,10 @@
-#環境設定ファイル
 from pydantic_settings import BaseSettings
-#DBを紐付ける
+from pydantic import Field
+
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql://postgres:mysecretpassword@localhost:5432/mydatabase"
+    DATABASE_URL: str = Field(..., env="DATABASE_URL")
+
+    class Config:
+        env_file = ".env"
 
 settings = Settings()

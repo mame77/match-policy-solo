@@ -1,5 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
+//新規投稿を作成
 export async function createPost(
   content: string,
   token: string,
@@ -8,9 +8,9 @@ export async function createPost(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`, // 認証ヘッダー
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content }), // 投稿内容をjsonで説明
   });
 
   if (!res.ok) {

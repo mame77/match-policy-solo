@@ -1,22 +1,30 @@
 'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/api/auth';
 
 export default function LoginPage() {
+  // 状態管理
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
+  const router = useRouter();
+  // フォーム送信
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     try {
-      const token = await login(username, password); // 関数に委譲
+      // トークンを取得
+      const token = await login(username, password);
+
+      // トークンをローカルストレージに保存
       localStorage.setItem('access_token', token);
+
+      // 投稿作成ページに遷移
       router.push('/posts/new');
     } catch (err: any) {
       console.error('ログイン中にエラー発生:', err);
@@ -25,7 +33,6 @@ export default function LoginPage() {
   };
 
   return (
-    // 【追加】フォーム全体をスマホ画面で見やすくするための中央寄せと余白設定
     <div
       style={{
         padding: '2rem 1rem',
