@@ -3,24 +3,37 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchDmUsers, DmUser } from '@/lib/api/dm';
+import { useGlobalWebSocket } from '@/components/WebSocketProvider';
 
 export default function DmListPage() {
   const router = useRouter();
-
-  // DM一覧状態管理
   const [dmUsers, setDmUsers] = useState<DmUser[]>([]);
+  const { lastMessage } = useGlobalWebSocket();
 
-  //  クリックしたときDMページへ遷移
+  // ユーザークリックでDMページへ遷移
   const handleClick = (userId: number) => {
     router.push(`/dm/${userId}`);
   };
 
-  // 初回にDMユーザー一覧を取得
+  // 初回にユーザー一覧を取得
   useEffect(() => {
     fetchDmUsers()
       .then(setDmUsers)
       .catch((err) => console.error('取得失敗:', err));
   }, []);
+
+  // WebSocketで新着メッセージを受信したらDM一覧を更新
+  useEffect(() => {
+    if (!lastMessage) return;
+
+    setDmUsers((prev) =>
+      prev.map((user) =>
+        user.id === Number(user.id) // ここは将来的に senderId をつけて比較
+          ? { ...user, lastMessage: lastMessage.content }
+          : user,
+      ),
+    );
+  }, [lastMessage]);
 
   return (
     <div className="container">

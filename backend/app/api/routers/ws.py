@@ -1,7 +1,6 @@
 # api/routers/ws.py
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
-from app.api.deps import get_current_user_id
-from app.services.ws import manager
+from app.websockets.connection_manager import manager
 ws_router = APIRouter()
 
 #dm用websocket接続用エンドポイント
@@ -12,4 +11,4 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
-        manager.disconnect(user_id)
+        manager.disconnect(user_id,websocket)

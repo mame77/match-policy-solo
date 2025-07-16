@@ -1,6 +1,7 @@
-# app/services/matching.py
 from app.db.db import get_connection
 
+
+#投稿順に上から一覧取得
 def get_matching_posts_service():
     conn = get_connection()
     cur = conn.cursor()

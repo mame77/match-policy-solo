@@ -1,7 +1,9 @@
+import asyncio
 from app.db.db import get_connection
 from app.schemas.dm import DmUser, MessageOut
-from app.services.ws import manager  # ✅ 追加
+from app.websockets.connection_manager import manager
 
+#dm一覧表示
 def fetch_dm_users(current_user_id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -23,14 +25,18 @@ def fetch_dm_users(current_user_id: int):
     LEFT JOIN profiles p ON u.id = p.user_id
     WHERE u.id != %s;
     """
+
+    #各ユーザーの最新のメッセージを取得
     cursor.execute(query, (current_user_id, current_user_id, current_user_id))
     rows = cursor.fetchall()
     conn.close()
+    #スキーマにマッピングして返却
     return [
         DmUser(id=row[0], name=row[1], avatarUrl=row[2], lastMessage=row[3] or "")
         for row in rows
     ]
 
+#メッセージ履歴を取得
 def fetch_messages(current_user_id: int, user_id: int):
     conn = get_connection()
     cursor = conn.cursor()
@@ -50,27 +56,46 @@ def fetch_messages(current_user_id: int, user_id: int):
         for row in rows
     ]
 
-def store_message(current_user_id: int, user_id: int, body: dict):
+
+#メッセージをDBに保存
+async def store_message(current_user_id: int, user_id: int, body: dict):
     content = body.get("content")
     if not content:
         return {"error": "content is required"}
+
     conn = get_connection()
     cursor = conn.cursor()
+
     cursor.execute(
         """
         INSERT INTO dms (sender_id, receiver_id, content)
-        VALUES (%s, %s, %s);
+        VALUES (%s, %s, %s)
+        RETURNING id;
         """,
         (current_user_id, user_id, content)
     )
+    message_id = cursor.fetchone()[0]
     conn.commit()
     conn.close()
 
+    # webSocketで通知
     try:
-        asyncio.create_task(manager.send_personal_message(content, user_id))
+
+        sender_message_data = {
+            "id": str(message_id),
+            "sender": "me",
+            "content": content
+        }
+        await manager.send_personal_message(current_user_id, sender_message_data) # <-- await を追加
+
+        receiver_message_data = {
+            "id": str(message_id),
+            "sender": "partner",
+            "content": content
+        }
+        await manager.send_personal_message(user_id, receiver_message_data) # <-- await を追加
+
     except Exception as e:
         print("WebSocket送信エラー:", e)
 
-
     return {"status": "ok"}
-

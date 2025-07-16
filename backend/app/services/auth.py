@@ -1,4 +1,3 @@
-
 from fastapi import HTTPException
 from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
 from app.core.security import hash_password, verify_password, create_access_token

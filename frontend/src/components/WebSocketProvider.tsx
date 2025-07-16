@@ -1,51 +1,46 @@
 'use client';
+
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
+
 import { createContext, useEffect, useRef, useContext, useState } from 'react';
 
-// メッセージ型定義
 type Message = {
   id: string;
   sender: 'me' | 'partner';
   content: string;
 };
 
-// WebSocketコンテキストの型定義
 type WebSocketContextType = {
   socket: WebSocket | null;
   lastMessage: Message | null;
 };
 
-// コンテキストを作成
 const WebSocketContext = createContext<WebSocketContextType>({
   socket: null,
   lastMessage: null,
 });
 
-// WebSocketプロバイダー
-export function WebSocketProvider({
-  userId,
-  children,
-}: {
-  userId: number | null;
-  children: React.ReactNode;
-}) {
-  const [lastMessage, setLastMessage] = useState<Message | null>(null); // 受信した最新メッセージ
+export function WebSocketProvider({ children }: { children: React.ReactNode }) {
+  const [lastMessage, setLastMessage] = useState<Message | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    const userId = parseJwt(token)?.sub;
     if (!userId) return;
 
-    // WebSocket接続
     const ws = new WebSocket(`${WS_URL}/ws/dm/${userId}`);
+
     ws.onopen = () => {
       console.log('🔌 WebSocket connected');
     };
 
-    // メッセージを受信
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log('📩 WebSocket message received:', data);
-      setLastMessage(data); // 最新メッセージをステートに保存
+      setLastMessage(data);
     };
 
     ws.onclose = () => {
@@ -57,7 +52,7 @@ export function WebSocketProvider({
     return () => {
       ws.close();
     };
-  }, [userId]);
+  }, []);
 
   return (
     <WebSocketContext.Provider
@@ -68,7 +63,15 @@ export function WebSocketProvider({
   );
 }
 
-// コンテキストを使うためのカスタムフック
+// JWTのsubを取り出すユーティリティ関数
+function parseJwt(token: string): { sub?: string } | null {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch {
+    return null;
+  }
+}
+
 export function useGlobalWebSocket() {
   return useContext(WebSocketContext);
 }

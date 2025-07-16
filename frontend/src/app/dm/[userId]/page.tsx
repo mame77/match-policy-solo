@@ -1,9 +1,10 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchMessages, sendMessageToUser, Message } from '@/lib/api/dm';
 import { v4 as uuidv4 } from 'uuid';
+import { useGlobalWebSocket } from '@/components/WebSocketProvider';
 
 export default function DMPage() {
   // URLのuserid取得
@@ -12,7 +13,8 @@ export default function DMPage() {
   // 状態の確認
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-
+  const { lastMessage } = useGlobalWebSocket();
+  const chatBoxRef = useRef<HTMLDivElement>(null);
   // 初回メッセージ取得
   useEffect(() => {
     fetchMessages(userId)
@@ -20,18 +22,27 @@ export default function DMPage() {
       .catch((err) => console.error('メッセージ取得失敗:', err));
   }, [userId]);
 
+  useEffect(() => {
+    if (lastMessage) {
+      setMessages((prev) => {
+        if (!prev.some((msg) => msg.id === lastMessage.id)) {
+          return [...prev, lastMessage];
+        }
+        return prev;
+      });
+    }
+  }, [lastMessage]);
+
+  //  messagesが更新されるたびにスクロールする
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   // メッセージ送信
   const sendMessage = async () => {
     if (!newMessage.trim()) return; // 空は無視
-
-    // 仮IDを生成
-    const tempId = uuidv4();
-    const messageToAdd: Message = {
-      id: tempId,
-      sender: 'me',
-      content: newMessage,
-    };
-    setMessages((prev) => [...prev, messageToAdd]); // 表示に追加
 
     try {
       // メッセージ送信
@@ -42,11 +53,6 @@ export default function DMPage() {
     setNewMessage('');
   };
 
-  const handleReceiveMessage = (msg: Message) => {
-    if (msg.sender === 'partner') {
-      setMessages((prev) => [...prev, msg]);
-    }
-  };
   return (
     <div className="chat-container">
       <h2 className="chat-title">ユーザー {userId} とチャット中</h2>
