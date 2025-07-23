@@ -1,12 +1,14 @@
-
-import { ReactNode } from "react";
-import Footer from "../components/Footer";
+import { ReactNode } from 'react';
+import Footer from '../components/Footer';
+import { WebSocketProvider } from '@/components/WebSocketProvider';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <body>
-        <main>{children}</main>
+        <WebSocketProvider>
+          <main>{children}</main>
+        </WebSocketProvider>
         <Footer />
       </body>
     </html>

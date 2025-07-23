@@ -1,4 +1,5 @@
 // src/lib/api/profile.ts
+// プロフィール画像と自己紹介をø
 export const uploadProfile = async ({
   blob,
   bio,
@@ -15,7 +16,8 @@ export const uploadProfile = async ({
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${API_URL}/api/profiles`, {
+  // プロフィール情報をサーバーへ送信
+  const res = await fetch(`${API_URL}/profiles`, {
     method: 'POST',
     body: formData,
   });

@@ -1,5 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// ログイン
 export async function login(
   username: string,
   password: string,
@@ -19,7 +20,7 @@ export async function login(
   const data = await res.json();
   return data.access_token;
 }
-
+// サインアップ
 export async function signup(
   username: string,
   password: string,
@@ -37,5 +38,5 @@ export async function signup(
     throw new Error('登録に失敗しました');
   }
 
-  return data.access_token; // トークンを返す
+  return data.access_token;
 }

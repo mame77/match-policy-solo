@@ -1,27 +1,10 @@
 
-# app/api/routers/matching.py
 from fastapi import APIRouter
-from app.db.db import get_connection
+from app.services.matching import get_matching_posts_service
 
 router = APIRouter()
 
+#投稿一覧の取得
 @router.get("/api/matching")
 def get_matching_posts():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("SELECT id, username, content, created_at FROM posts ORDER BY created_at DESC")
-    rows = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return [
-        {
-            "id": row[0],
-            "username": row[1],
-            "content": row[2],
-            "created_at": row[3]
-        }
-        for row in rows
-    ]
+    return get_matching_posts_service()
