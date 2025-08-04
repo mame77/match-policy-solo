@@ -2,6 +2,7 @@ import asyncio
 from app.db.db import get_connection
 from app.schemas.dm import DmUser, MessageOut
 from app.websockets.connection_manager import manager
+from app.services.profiles import _MINIO_PUBLIC, MINIO_BUCKET
 
 #dm一覧表示
 def fetch_dm_users(current_user_id: int):
@@ -32,7 +33,12 @@ def fetch_dm_users(current_user_id: int):
     conn.close()
     #スキーマにマッピングして返却
     return [
-        DmUser(id=row[0], name=row[1], avatarUrl=row[2], lastMessage=row[3] or "")
+        DmUser(
+            id=row[0],
+            name=row[1],
+            avatarUrl=f"{_MINIO_PUBLIC}/{MINIO_BUCKET}/{row[2].lstrip('/')}" if row[2] else None,
+            lastMessage=row[3] or ""
+        )
         for row in rows
     ]
 
