@@ -21,3 +21,12 @@ CREATE TABLE IF NOT EXISTS dms (
   FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE posts (
+  id          SERIAL PRIMARY KEY,
+  user_id     INT NOT NULL
+               REFERENCES users(id)
+               ON DELETE CASCADE,
+  content     TEXT    NOT NULL,
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
