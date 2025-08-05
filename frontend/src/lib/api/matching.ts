@@ -4,7 +4,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export type Post = {
   id: number;
   username: string;
+  avatar_url: string | null; // ← 追加（null の可能性があるならこう）
   content: string;
+  created_at: string;        // ← 追加（ISO文字列として返ってくる）
 };
 
 // マッチング用の投稿一覧を取得

@@ -23,6 +23,7 @@ export default function Footer() {
         justifyContent: 'space-around',
       }}
     >
+      <Link href="/profile">プロフィール</Link>
       <Link href="/posts/new">投稿</Link>
       <Link href="/posts">マッチング</Link>
       <Link href="/dm">DM</Link>
