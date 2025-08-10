@@ -3,6 +3,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchMatchingPosts, Post } from '@/lib/api/matching';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+// dayjsにプラグインを拡張
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale('ja');
+dayjs.tz.setDefault('Asia/Tokyo'); // 日本時間ベース
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -20,110 +31,53 @@ export default function PostsPage() {
       });
   }, []);
 
+  // 経過時間を相対的に表示する関数
   const formatTimestamp = (timestamp: string): string => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return dayjs.utc(timestamp).tz('Asia/Tokyo').fromNow(); // 相対時間を表示
   };
 
-  if (loading) return <p style={styles.loading}>読み込み中...</p>;
+  if (loading) return <p style={{ textAlign: 'center', marginTop: '100px', fontSize: '18px', color: '#666' }}>読み込み中...</p>;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>投稿一覧 / マッチング</h1>
+    <div style={{
+      maxWidth: '600px',
+      margin: '40px auto',
+      fontFamily: "'Helvetica Neue', sans-serif",
+      padding: '0 16px',
+    }}>
+      <h1 style={{ textAlign: 'center', fontSize: '28px', marginBottom: '24px', fontWeight: 600 }}>投稿一覧 / マッチング</h1>
       {posts.map((post) => (
-        <Link href={`/profile/${post.username}`} key={post.id} style={styles.link}>
-          <div style={styles.card}>
-            <div style={styles.header}>
+        <Link href={`/profile/${post.username}`} key={post.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div style={{
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+            padding: '15px',
+            marginBottom: '15px',
+            backgroundColor: '#fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+            textAlign: 'left',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              {/* アイコンのサイズを大きく変更 */}
               <img
                 src={post.avatar_url || '/default-avatar.png'}
                 alt={`${post.username}のアバター`}
-                style={styles.avatar}
+                style={{
+                  width: '48px',  // アイコンの幅
+                  height: '48px',  // アイコンの高さ
+                  borderRadius: '50%',  // 丸型にする
+                  marginRight: '8px',
+                }}
               />
-              <h2 style={styles.username}>{post.username}</h2>
+              <strong style={{ fontSize: '1em', marginRight: '8px' }}>{post.username}</strong>
+              <span style={{ color: '#66757F', fontSize: '0.9em', marginLeft: 'auto' }}>
+                ・ {formatTimestamp(post.created_at)}
+              </span>
             </div>
-            <p style={styles.content}>{post.content}</p>
-            {/* 投稿日時を右下に配置 */}
-            <p style={styles.timestamp}>{formatTimestamp(post.created_at)}</p>
+            <p style={{ margin: '0', fontSize: '1.05em', lineHeight: '1.4' }}>{post.content}</p>
           </div>
         </Link>
       ))}
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: '600px',
-    margin: '40px auto',
-    fontFamily: "'Helvetica Neue', sans-serif",
-    padding: '0 16px',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: '28px',
-    marginBottom: '24px',
-    fontWeight: 600,
-  },
-  card: {
-    background: '#fff',
-    borderRadius: '16px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    padding: '16px',
-    marginBottom: '16px',
-    transition: 'transform 0.2s ease',
-    cursor: 'pointer',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative', // timestampを絶対位置で配置するために必要
-    paddingBottom: '32px', // timestampの分、下部に余白を確保
-  },
-  link: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    marginBottom: '12px',
-  },
-  avatar: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    border: '2px solid #eee',
-  },
-  username: {
-    fontSize: '18px',
-    fontWeight: 600,
-    margin: 0,
-    color: '#333',
-  },
-  timestamp: {
-    position: 'absolute', // 親要素（card）を基準に位置を決定
-    bottom: '12px',
-    right: '16px',
-    fontSize: '13px',
-    color: '#888',
-    margin: 0,
-  },
-  content: {
-    fontSize: '16px',
-    color: '#444',
-    lineHeight: '1.5',
-    margin: 0,
-  },
-  loading: {
-    textAlign: 'center',
-    marginTop: '100px',
-    fontSize: '18px',
-    color: '#666',
-  },
-};
