@@ -89,7 +89,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
 }
 
 // 1つの投稿を表示する新しいコンポーネント
-function PostCard({ post }: { post: Post }) {
+function PostCard({ post, avatarUrl }: { post: Post, avatarUrl: string }) {
   // 投稿からの経過時間を整形する関数（dayjsを使用）
   const formatTimeAgo = (isoString: string) => {
     return dayjs.utc(isoString).tz().fromNow(); // ←日本語時間で表示
@@ -97,22 +97,39 @@ function PostCard({ post }: { post: Post }) {
 
   return (
     <div style={{
-      border: '1px solid #e0e0e0',
-      borderRadius: '8px',
-      padding: '15px',
-      marginBottom: '15px',
-      backgroundColor: '#fff',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-      textAlign: 'left'
+      maxWidth: '600px',
+      margin: '40px auto',
+      fontFamily: "'Helvetica Neue', sans-serif",
+      padding: '0 16px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-        <strong style={{ marginRight: '8px' }}>{post.username}</strong>
-        <span style={{ color: '#66757F', fontSize: '0.9em' }}>@{post.username.toLowerCase().replace(/\s/g, '')}</span>
-        <span style={{ color: '#66757F', fontSize: '0.9em', marginLeft: 'auto' }}>
-          ・ {formatTimeAgo(post.created_at)}
-        </span>
+      <div key={post.id} style={{
+        border: '1px solid #e0e0e0',
+        borderRadius: '8px',
+        padding: '15px',
+        marginBottom: '15px',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+        textAlign: 'left',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+          {/* プロフィールから渡されたアイコンURLを使用 */}
+          <img
+            src={avatarUrl || '/default-avatar.png'}  // avatar_urlがない場合はデフォルト画像
+            alt={`${post.username}のアバター`}
+            style={{
+              width: '48px',  // アイコンの幅
+              height: '48px',  // アイコンの高さ
+              borderRadius: '50%',  // 丸型にする
+              marginRight: '8px',
+            }}
+          />
+          <strong style={{ fontSize: '1em', marginRight: '8px' }}>{post.username}</strong>
+          <span style={{ color: '#66757F', fontSize: '0.9em', marginLeft: 'auto' }}>
+            ・ {formatTimeAgo(post.created_at)} {/* 投稿からの経過時間を表示 */}
+          </span>
+        </div>
+        <p style={{ margin: '0', fontSize: '1.05em', lineHeight: '1.4' }}>{post.content}</p>
       </div>
-      <p style={{ margin: '0', fontSize: '1.05em', lineHeight: '1.4' }}>{post.content}</p>
     </div>
   );
 }
@@ -210,7 +227,7 @@ export default function ProfilePage() {
         ) : (
           // 投稿があれば、PostCardコンポーネントをリスト表示
           posts.map(post => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} avatarUrl={profile.avatar_url} />
           ))
         )}
       </div>
