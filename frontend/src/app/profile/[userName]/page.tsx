@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -85,6 +86,23 @@ function ProfileCard({ profile }: { profile: Profile }) {
           <p style={{ margin: 0, color: '#555' }}>
             <strong style={{ fontSize: '1.1em' }}>{profile.followers_count}</strong> フォロワー
           </p>
+          {/* ここにDMボタンを追加 */}
+            <Link 
+              href={`/messages/${profile.user_id}`}
+              style={{
+                display: 'inline-block',
+                padding: '6px 16px',
+                backgroundColor: '#1DA1F2',
+                color: '#fff',
+                borderRadius: '9999px',
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                fontSize: '0.9em',
+                marginLeft: 'auto', // 右端に寄せる
+              }}
+            >
+              DMを送る
+            </Link>
         </div>
       </div>
     </div>
