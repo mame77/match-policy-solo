@@ -13,7 +13,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale('ja');
-dayjs.tz.setDefault('Asia/Tokyo'); // 日本時間ベース
+dayjs.tz.setDefault('Asia/Tokyo'); // 日本時間のタイムゾーンで設定
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);

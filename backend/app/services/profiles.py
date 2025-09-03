@@ -1,4 +1,5 @@
 import os
+from fastapi import HTTPException
 from datetime import timedelta
 from minio import Minio
 from minio.error import S3Error
@@ -127,6 +128,39 @@ def read_my_profile(
     return ProfileResponse(
         user_id=current_user_id,
         username=username,
+        avatar_url=full_url,
+        bio=bio,
+    )
+
+def read_profile_by_username(username: str) -> ProfileResponse:
+    """
+    username からプロフィールを取得。
+    なければ HTTP 404 を投げる。
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT u.id AS user_id, u.username, p.avatar_url, p.bio
+          FROM users u
+          INNER JOIN profiles p ON p.user_id = u.id
+         WHERE u.username = %s
+        """,
+        (username,),
+    )
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="プロフィールが存在しません")
+
+    user_id, uname, avatar_key, bio = row
+    full_url = f"{_MINIO_PUBLIC}/{MINIO_BUCKET}/{avatar_key.lstrip('/')}" if avatar_key else None
+
+    return ProfileResponse(
+        user_id=user_id,
+        username=uname,
         avatar_url=full_url,
         bio=bio,
     )

@@ -11,7 +11,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.locale('ja')
-dayjs.tz.setDefault('Asia/Tokyo')  // ← これで日本時間ベース
+dayjs.tz.setDefault('Asia/Tokyo')  //  日本時間のタイムゾーンで設定
 
 
 
@@ -92,7 +92,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
 function PostCard({ post, avatarUrl }: { post: Post, avatarUrl: string }) {
   // 投稿からの経過時間を整形する関数（dayjsを使用）
   const formatTimeAgo = (isoString: string) => {
-    return dayjs.utc(isoString).tz().fromNow(); // ←日本語時間で表示
+    return dayjs.utc(isoString).tz().fromNow(); // 日本時間のタイムゾーンで設定
   };
 
   return (

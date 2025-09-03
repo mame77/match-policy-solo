@@ -1,10 +1,9 @@
-
 # app/api/routers/profile.py
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import List
 
 from app.schemas.profile import ProfileCreate, ProfileResponse, UploadUrlResponse
-from app.services.profiles import get_upload_url, setup_profile, read_my_profile
+from app.services.profiles import get_upload_url, setup_profile, read_my_profile, read_profile_by_username
 from app.api.deps import get_current_user_id
 
 router = APIRouter()
@@ -43,3 +42,8 @@ def read_me(
     current_user_id: int = Depends(get_current_user_id),
 ) -> ProfileResponse:
     return read_my_profile(current_user_id)
+
+# 相手のプロフィール取得
+@router.get("/profiles/{username}", response_model=ProfileResponse)
+def read_by_username(username: str) -> ProfileResponse:
+    return read_profile_by_username(username)

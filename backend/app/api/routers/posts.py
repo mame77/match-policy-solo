@@ -5,7 +5,7 @@ from typing import List
 from app.schemas.post import PostCreate, PostResponseWithUsername
 from app.schemas.user import User
 from app.api.deps import get_current_user
-from app.services.posts import create_post_service, get_posts_by_user_id
+from app.services.posts import create_post_service, get_posts_by_user_id, read_posts_by_username
 
 
 router = APIRouter()
@@ -26,3 +26,7 @@ def read_my_posts(
     新しい順にソートされます。
     """
     return get_posts_by_user_id(current_user.id)
+
+@router.get("/posts/{username}", response_model=List[PostResponseWithUsername])
+def read_by_username(username: str):
+    return read_posts_by_username(username)
