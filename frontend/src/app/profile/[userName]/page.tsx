@@ -88,7 +88,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
           </p>
           {/* ここにDMボタンを追加 */}
             <Link 
-              href={`/messages/${profile.user_id}`}
+              href={`/dm/${profile.user_id}?name=${profile.username}`}
               style={{
                 display: 'inline-block',
                 padding: '6px 16px',
