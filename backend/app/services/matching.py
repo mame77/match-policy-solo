@@ -9,6 +9,7 @@ def get_matching_posts_service():
     cur.execute("""
         SELECT 
             posts.id,
+            posts.user_id, 
             users.username,
             profiles.avatar_url,
             posts.content,
@@ -26,10 +27,11 @@ def get_matching_posts_service():
     return [
         {
             "id": row[0],
-            "username": row[1],
-            "avatar_url": f"{_MINIO_PUBLIC}/{MINIO_BUCKET}/{row[2].lstrip('/')}" if row[2] else None,
-            "content": row[3],
-            "created_at": row[4]
+            "user_id" :row[1],
+            "username": row[2],
+            "avatar_url": f"{_MINIO_PUBLIC}/{MINIO_BUCKET}/{row[3].lstrip('/')}" if row[3] else None,
+            "content": row[4],
+            "created_at": row[5]
         }
         for row in rows
     ]

@@ -38,6 +38,16 @@ export default function PostsPage() {
 
   if (loading) return <p style={{ textAlign: 'center', marginTop: '100px', fontSize: '18px', color: '#666' }}>読み込み中...</p>;
 
+  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+  let currentUsername: string | null = null;
+  try {
+    const payload = token
+      ? JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      : null;
+    currentUsername = payload?.username ?? payload?.sub ?? null;
+  } catch {}
+
+
   return (
     <div style={{
       maxWidth: '600px',
@@ -45,27 +55,34 @@ export default function PostsPage() {
       fontFamily: "'Helvetica Neue', sans-serif",
       padding: '0 16px',
     }}>
-      <h1 style={{ textAlign: 'center', fontSize: '28px', marginBottom: '24px', fontWeight: 600 }}>投稿一覧 / マッチング</h1>
+      <h1 style={{ textAlign: 'center', fontSize: '28px', marginBottom: '24px', fontWeight: 600 }}>
+        投稿一覧 / マッチング
+      </h1>
       {posts.map((post) => (
-        <Link href={`/profile/${post.username}`} key={post.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div style={{
-            border: '1px solid #e0e0e0',
-            borderRadius: '8px',
-            padding: '15px',
-            marginBottom: '15px',
-            backgroundColor: '#fff',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-            textAlign: 'left',
-          }}>
+        <Link
+          href={String(post.user_id) === currentUsername ? "/profile" : `/profile/${post.username}`}
+          key={post.id}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <div
+            style={{
+              border: '1px solid #e0e0e0',
+              borderRadius: '8px',
+              padding: '15px',
+              marginBottom: '15px',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              textAlign: 'left',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              {/* アイコンのサイズを大きく変更 */}
               <img
                 src={post.avatar_url || '/default-avatar.png'}
                 alt={`${post.username}のアバター`}
                 style={{
-                  width: '48px',  // アイコンの幅
-                  height: '48px',  // アイコンの高さ
-                  borderRadius: '50%',  // 丸型にする
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
                   marginRight: '8px',
                 }}
               />
@@ -80,4 +97,4 @@ export default function PostsPage() {
       ))}
     </div>
   );
-}
+} // ← ⭐ これが抜けてると「一番下のエラー」になります
