@@ -37,7 +37,7 @@ export default function DmListPage() {
 
   return (
     <div className="container">
-      <h1 className="title">DM一覧</h1>
+      <h1 className="title">💬 DM</h1>
       <ul className="dm-list">
         {dmUsers.map((user) => (
           <li
@@ -59,17 +59,21 @@ export default function DmListPage() {
 
       <style>{`
         .container {
-          max-width: 480px;
-          margin: 40px auto;
-          padding: 20px;
-          font-family: 'Segoe UI', sans-serif;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 2rem 1rem 6rem 1rem;
+          min-height: 100vh;
+          background: transparent;
         }
 
         .title {
           text-align: center;
-          font-size: 28px;
-          font-weight: 600;
-          margin-bottom: 24px;
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 2rem;
+          color: white;
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+          animation: fadeInUp 0.6s ease-out;
         }
 
         .dm-list {
@@ -78,33 +82,37 @@ export default function DmListPage() {
           margin: 0;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 1rem;
         }
 
         .dm-item {
           display: flex;
           align-items: center;
-          padding: 16px;
-          background: #fff;
-          border-radius: 12px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          padding: 1.5rem;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-radius: 24px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
           cursor: pointer;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          position: relative;
+          overflow: hidden;
         }
 
         .dm-item:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-          background-color: #fafafa;
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .avatar {
-          width: 56px;
-          height: 56px;
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
-          margin-right: 16px;
+          margin-right: 1rem;
           object-fit: cover;
-          border: 2px solid #eee;
+          border: 3px solid rgba(102, 126, 234, 0.3);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .dm-content {
@@ -112,16 +120,17 @@ export default function DmListPage() {
         }
 
         .dm-name {
-          font-size: 18px;
+          font-size: 1.2rem;
           font-weight: 600;
-          margin: 0;
-          color: #333;
+          margin: 0 0 0.5rem 0;
+          color: #1a1a1a;
         }
 
         .dm-last {
-          margin-top: 6px;
-          color: #777;
-          font-size: 14px;
+          margin: 0;
+          color: #666;
+          font-size: 0.9rem;
+          line-height: 1.4;
         }
       `}</style>
     </div>
