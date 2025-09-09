@@ -4,6 +4,7 @@
 #若者が政治に一歩踏み出すきっかけを作ることを目指しています。
 
 ---
+<img width="308" height="652" alt="image" src="https://github.com/user-attachments/assets/fea5cb32-8f34-487a-bfcc-62274128e206" />
 
 ## 🛠 技術スタック
 
