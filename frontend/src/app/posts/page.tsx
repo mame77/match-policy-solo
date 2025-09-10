@@ -1,15 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { fetchMatchingPosts, Post } from '@/lib/api/matching';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+// dayjs 設定
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale('ja');
+dayjs.tz.setDefault('Asia/Tokyo');
 
 export default function PostsPage() {
-  // 投稿状態管理
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 初回投稿一覧取得
   useEffect(() => {
     fetchMatchingPosts()
       .then((data) => {
@@ -22,14 +31,34 @@ export default function PostsPage() {
       });
   }, []);
 
-  if (loading) return <p style={styles.loading}>読み込み中...</p>;
+  // 相対時間
+  const formatTimestamp = (timestamp: string): string => {
+    return dayjs.utc(timestamp).tz('Asia/Tokyo').fromNow();
+  };
+
+  if (loading) {
+    return <p style={styles.loading}>読み込み中...</p>;
+  }
+
+  // ログインユーザー名の取得（自分のプロフィール遷移に使用）
+  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+  let currentUsername: string | null = null;
+  try {
+    const payload = token
+      ? JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      : null;
+    currentUsername = payload?.username ?? payload?.sub ?? null;
+  } catch {}
 
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>💕 マッチング</h1>
       {posts.map((post, index) => (
-        <Link href={`/profile/${post.username}`} key={post.id}>
-          <div 
+        <Link
+          key={post.id}
+          href={String(post.user_id) === currentUsername ? '/profile' : `/profile/${post.username}`}
+        >
+          <div
             style={{
               ...styles.card,
               animationDelay: `${index * 0.1}s`,
@@ -47,6 +76,9 @@ export default function PostsPage() {
           >
             <h2 style={styles.username}>
               🙋‍♀️ {post.username}
+              <span style={{ marginLeft: 'auto', fontSize: '0.9rem', color: '#666' }}>
+                ・ {formatTimestamp(post.created_at)}
+              </span>
             </h2>
             <p style={styles.content}>{post.content}</p>
           </div>
@@ -56,7 +88,7 @@ export default function PostsPage() {
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: Record<string, CSSProperties> = {
   container: {
     maxWidth: '600px',
     margin: '0 auto',
@@ -68,7 +100,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: 'center',
     fontSize: '2rem',
     marginBottom: '2rem',
-    fontWeight: '700',
+    fontWeight: 700,
     color: 'white',
     textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
     animation: 'fadeInUp 0.6s ease-out',
@@ -88,7 +120,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   username: {
     fontSize: '1.3rem',
-    fontWeight: '600',
+    fontWeight: 600,
     marginBottom: '0.5rem',
     color: '#1a1a1a',
     display: 'flex',
@@ -98,7 +130,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   content: {
     fontSize: '1rem',
     color: '#555',
-    lineHeight: '1.6',
+    lineHeight: 1.6,
     marginTop: '0.5rem',
   },
   loading: {

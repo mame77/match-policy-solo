@@ -25,9 +25,7 @@ def get_current_user_id(token: str = Depends(oauth2_scheme)) -> int:
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return User(username=username)
+        user_id = int(payload.get("sub"))
+        return User(id=user_id, username=str(user_id))  # usernameは仮の文字列でも可
     except JWTError:
         raise HTTPException(status_code=401, detail="Token decode failed")

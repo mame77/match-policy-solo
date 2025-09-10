@@ -9,8 +9,8 @@ class ProfileCreate(BaseModel):
     bio: str
 
 class ProfileResponse(BaseModel):
-    id: int
     user_id: int
+    username:   str
     avatar_url: str
     bio: str
 

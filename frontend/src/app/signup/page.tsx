@@ -16,7 +16,7 @@ export default function SignUpPage() {
 
     try {
       const token = await signup(username, password);
-      localStorage.setItem('token', token);
+      localStorage.setItem('access_token', token);
       router.push('/setup');
     } catch (err: any) {
       console.error(err);

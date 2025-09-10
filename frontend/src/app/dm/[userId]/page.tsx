@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams} from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { fetchMessages, sendMessageToUser, Message } from '@/lib/api/dm';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,8 @@ import { useGlobalWebSocket } from '@/components/WebSocketProvider';
 export default function DMPage() {
   // URLのuserid取得
   const { userId } = useParams() as { userId: string };
-
+  const searchParams = useSearchParams();
+  const usernameFromQuery = searchParams.get('name');
   // 状態の確認
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -55,7 +56,9 @@ export default function DMPage() {
 
   return (
     <div className="chat-container">
-      <h2 className="chat-title">ユーザー {userId} とチャット中</h2>
+      <h2 className="chat-title">
+        {usernameFromQuery ? `${usernameFromQuery} とチャット中` : `ユーザー ${userId} とチャット中`}
+      </h2>
       <div className="chat-box">
         {messages.map((msg) => (
           <div
