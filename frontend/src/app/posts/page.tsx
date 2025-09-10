@@ -3,13 +3,22 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fetchMatchingPosts, Post } from '@/lib/api/matching';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+// dayjsにプラグインを拡張
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale('ja');
+dayjs.tz.setDefault('Asia/Tokyo'); // 日本時間のタイムゾーンで設定
 
 export default function PostsPage() {
-  // 投稿状態管理
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 初回投稿一覧取得
   useEffect(() => {
     fetchMatchingPosts()
       .then((data) => {
@@ -22,58 +31,70 @@ export default function PostsPage() {
       });
   }, []);
 
-  if (loading) return <p style={styles.loading}>読み込み中...</p>;
+  // 経過時間を相対的に表示する関数
+  const formatTimestamp = (timestamp: string): string => {
+    return dayjs.utc(timestamp).tz('Asia/Tokyo').fromNow(); // 相対時間を表示
+  };
+
+  if (loading) return <p style={{ textAlign: 'center', marginTop: '100px', fontSize: '18px', color: '#666' }}>読み込み中...</p>;
+
+  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+  let currentUsername: string | null = null;
+  try {
+    const payload = token
+      ? JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      : null;
+    currentUsername = payload?.username ?? payload?.sub ?? null;
+  } catch {}
+
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>投稿一覧 / マッチング</h1>
+    <div style={{
+      maxWidth: '600px',
+      margin: '40px auto',
+      fontFamily: "'Helvetica Neue', sans-serif",
+      padding: '0 16px',
+    }}>
+      <h1 style={{ textAlign: 'center', fontSize: '28px', marginBottom: '24px', fontWeight: 600 }}>
+        投稿一覧 / マッチング
+      </h1>
       {posts.map((post) => (
-        <Link href={`/profile/${post.username}`} key={post.id}>
-          <div style={styles.card}>
-            <h2 style={styles.username}>{post.username}</h2>
-            <p style={styles.content}>{post.content}</p>
+        <Link
+          href={String(post.user_id) === currentUsername ? "/profile" : `/profile/${post.username}`}
+          key={post.id}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <div
+            style={{
+              border: '1px solid #e0e0e0',
+              borderRadius: '8px',
+              padding: '15px',
+              marginBottom: '15px',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              textAlign: 'left',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              <img
+                src={post.avatar_url || '/default-avatar.png'}
+                alt={`${post.username}のアバター`}
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  marginRight: '8px',
+                }}
+              />
+              <strong style={{ fontSize: '1em', marginRight: '8px' }}>{post.username}</strong>
+              <span style={{ color: '#66757F', fontSize: '0.9em', marginLeft: 'auto' }}>
+                ・ {formatTimestamp(post.created_at)}
+              </span>
+            </div>
+            <p style={{ margin: '0', fontSize: '1.05em', lineHeight: '1.4' }}>{post.content}</p>
           </div>
         </Link>
       ))}
     </div>
   );
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: '600px',
-    margin: '40px auto',
-    fontFamily: "'Helvetica Neue', sans-serif",
-    padding: '0 16px',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: '28px',
-    marginBottom: '24px',
-    fontWeight: 600,
-  },
-  card: {
-    background: '#fff',
-    borderRadius: '16px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    padding: '16px',
-    marginBottom: '16px',
-    transition: 'transform 0.2s ease',
-    cursor: 'pointer',
-  },
-  username: {
-    fontSize: '20px',
-    fontWeight: 500,
-    marginBottom: '8px',
-  },
-  content: {
-    fontSize: '16px',
-    color: '#444',
-  },
-  loading: {
-    textAlign: 'center',
-    marginTop: '100px',
-    fontSize: '18px',
-    color: '#666',
-  },
-};
+} // ← ⭐ これが抜けてると「一番下のエラー」になります

@@ -11,8 +11,9 @@ export default function DmListPage() {
   const { lastMessage } = useGlobalWebSocket();
 
   // ユーザークリックでDMページへ遷移
-  const handleClick = (userId: number) => {
-    router.push(`/dm/${userId}`);
+  const handleClick = (user: DmUser) => {
+    const encodedName = encodeURIComponent(user.name);
+    router.push(`/dm/${user.id}?name=${encodedName}`);
   };
 
   // 初回にユーザー一覧を取得
@@ -43,7 +44,7 @@ export default function DmListPage() {
           <li
             key={user.id}
             className="dm-item"
-            onClick={() => handleClick(user.id)}
+            onClick={() => handleClick(user)}
           >
             <img
               src={user.avatarUrl || '/default-avatar.png'}
