@@ -6,6 +6,8 @@
 ---
 <img width="308" height="652" alt="image" src="https://github.com/user-attachments/assets/fea5cb32-8f34-487a-bfcc-62274128e206" />
 
+発表資料https://www.canva.com/design/DAGyiaWL9dg/ryJbHLJeH3ZemKth7kbtcQ/edit
+
 ## 🛠 技術スタック
 
 | 項目                 | 使用技術            |
